@@ -1,8 +1,9 @@
 import { Image } from 'expo-image';
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { TMessageJSON, TParticipant } from '../types/api';
+import { TMessageAttachment, TMessageJSON, TParticipant } from '../types/api';
 import Avatar from './Avatar';
+import ImagePreviewOverlay from './ImagePreviewOverlay';
 import ParticipantDetailsBottomSheet from './ParticipantDetailsBottomSheet';
 import ReactionsBottomSheet from './ReactionsBottomSheet';
 
@@ -24,6 +25,9 @@ const MessageItem: React.FC<MessageItemProps> = ({
   const [isReactionsSheetVisible, setReactionsSheetVisible] = useState(false);
   const [isParticipantDetailsVisible, setParticipantDetailsVisible] = useState(false);
   const [selectedParticipant, setSelectedParticipant] = useState<TParticipant | undefined>(undefined);
+  const [isImagePreviewVisible, setImagePreviewVisible] = useState(false);
+  const [selectedImageAttachment, setSelectedImageAttachment] = useState<TMessageAttachment | undefined>(undefined);
+
   const senderName = isMyMessage ? 'You' : (participant?.name || 'Unknown User');
   const messageTime = new Date(message.sentAt).toLocaleTimeString([], {
     hour: '2-digit',
@@ -37,6 +41,11 @@ const MessageItem: React.FC<MessageItemProps> = ({
   const handleParticipantClick = (p: TParticipant | undefined) => {
     setSelectedParticipant(p);
     setParticipantDetailsVisible(true);
+  };
+
+  const handleImageClick = (attachment: TMessageAttachment | undefined) => {
+    setSelectedImageAttachment(attachment);
+    setImagePreviewVisible(true);
   };
 
   return (
@@ -65,14 +74,16 @@ const MessageItem: React.FC<MessageItemProps> = ({
       )}
 
       {imageAttachment && (
-        <Image
-          source={{ uri: imageAttachment.url }}
-          style={[
-            styles.messageImage,
-            { aspectRatio: imageAttachment.width / imageAttachment.height || 1 },
-          ]}
-          contentFit="contain"
-        />
+        <TouchableOpacity onPress={() => handleImageClick(imageAttachment)}>
+          <Image
+            source={{ uri: imageAttachment.url }}
+            style={[
+              styles.messageImage,
+              { aspectRatio: imageAttachment.width / imageAttachment.height || 1 },
+            ]}
+            contentFit="contain"
+          />
+        </TouchableOpacity>
       )}
 
       {message.replyToMessage && (
@@ -118,6 +129,11 @@ const MessageItem: React.FC<MessageItemProps> = ({
         isVisible={isParticipantDetailsVisible}
         onClose={() => setParticipantDetailsVisible(false)}
         participant={selectedParticipant}
+      />
+      <ImagePreviewOverlay
+        isVisible={isImagePreviewVisible}
+        onClose={() => setImagePreviewVisible(false)}
+        imageAttachment={selectedImageAttachment}
       />
     </View>
   );
