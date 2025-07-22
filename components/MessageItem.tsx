@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native'; // <<< Import Image
 import { TMessageJSON, TParticipant } from '../types/api';
 import Avatar from './Avatar';
 
@@ -22,6 +22,11 @@ const MessageItem: React.FC<MessageItemProps> = ({
     minute: '2-digit',
   });
 
+  // Get the first image attachment if it exists
+  const imageAttachment = message.attachments?.find(
+    (att) => att.type === 'image'
+  );
+
   return (
     <View style={[
       styles.messageBubble,
@@ -41,6 +46,17 @@ const MessageItem: React.FC<MessageItemProps> = ({
             {senderName}
           </Text>
         </View>
+      )}
+
+      {imageAttachment && (
+        <Image
+          source={{ uri: imageAttachment.url }}
+          style={[
+            styles.messageImage,
+            { aspectRatio: imageAttachment.width / imageAttachment.height || 1 },
+          ]}
+          resizeMode="contain"
+        />
       )}
 
       <Text style={styles.messageText}>{message.text}</Text>
@@ -96,6 +112,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#FFFFFF',
     marginBottom: 4,
+  },
+  messageImage: {
+    width: '100%',
+    height: 200,
+    borderRadius: 8,
+    marginBottom: 8,
   },
   editedIndicator: {
     fontSize: 10,
