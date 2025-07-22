@@ -1,6 +1,7 @@
 import React from 'react';
-import { FlatList, StyleSheet } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
 import { TMessageJSON, TParticipant } from '../types/api';
+import DateSeparator from './DateSeperator';
 import MessageItem from './MessageItem';
 
 interface MessageListProps {
@@ -29,13 +30,23 @@ const MessageList: React.FC<MessageListProps> = ({
           previousMessage.authorUuid === item.authorUuid &&
           (item.sentAt - previousMessage.sentAt < 60000);
 
+        let showDateSeparator = false;
+        if (!previousMessage || new Date(item.sentAt).toDateString() !== new Date(previousMessage.sentAt).toDateString()) {
+          showDateSeparator = true;
+        }
+
         return (
-          <MessageItem
-            message={item}
-            participant={getParticipant(item.authorUuid)}
-            isMyMessage={item.authorUuid === myUuid}
-            isGrouped={isGrouped}
-          />
+          <View>
+            {showDateSeparator && (
+              <DateSeparator date={item.sentAt} />
+            )}
+            <MessageItem
+              message={item}
+              participant={getParticipant(item.authorUuid)}
+              isMyMessage={item.authorUuid === myUuid}
+              isGrouped={isGrouped}
+            />
+          </View>
         );
       }}
       inverted

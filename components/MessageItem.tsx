@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native'; // <<< Import Image
+import { Image, StyleSheet, Text, View } from 'react-native';
 import { TMessageJSON, TParticipant } from '../types/api';
 import Avatar from './Avatar';
 
@@ -57,6 +57,17 @@ const MessageItem: React.FC<MessageItemProps> = ({
           ]}
           resizeMode="contain"
         />
+      )}
+
+      {message.replyToMessage && (
+        <View style={styles.replyContainer}>
+          <Text style={styles.replySender}>
+            {message.replyToMessage.authorUuid === 'you' ? 'You' : (participant?.name || 'Unknown User')}
+          </Text>
+          <Text style={styles.replyText} numberOfLines={1}>
+            {message.replyToMessage.text}
+          </Text>
+        </View>
       )}
 
       <Text style={styles.messageText}>{message.text}</Text>
@@ -127,6 +138,24 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 8,
     marginBottom: 8,
+  },
+  replyContainer: {
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    borderRadius: 8,
+    padding: 8,
+    marginBottom: 8,
+    borderLeftWidth: 3,
+    borderLeftColor: '#BBBBBB',
+  },
+  replySender: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#BBBBBB',
+    marginBottom: 2,
+  },
+  replyText: {
+    fontSize: 14,
+    color: '#E0E0E0',
   },
   editedIndicator: {
     fontSize: 10,
