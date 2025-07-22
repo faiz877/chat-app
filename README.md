@@ -2,6 +2,22 @@
 
 Chat-App is a cross-platform (iOS/Android) single-room chat application built with React Native. It aims to provide a focused, real-time messaging experience for a single shared conversation.
 
+## Screenshots
+
+<p float="left">
+  <span style="margin-right: 10px;">
+    <img src="https://github.com/user-attachments/assets/675fa9a5-931e-4723-a627-88fa5ac78719" height="500" />
+  </span>
+  <span style="margin-right: 10px;">
+    <img src="https://github.com/user-attachments/assets/5327b0db-12de-4b9f-81c9-a288bd818ae6" height="500" />
+  </span>
+  <span>
+    <img src="https://github.com/user-attachments/assets/20c1d3e8-057b-4afd-bd0a-228712c3a9d0" height="500" />
+  </span>
+</p>
+
+
+
 ## Features
 
 This project implements the following features :
@@ -23,7 +39,7 @@ This project implements the following features :
 
 1.  **Clone the repository:**
     ```bash
-    git clone [your-repo-link]
+    git clone [repo-link]
     cd chat-app
     ```
 2.  **Install dependencies:**
