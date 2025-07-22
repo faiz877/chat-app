@@ -1,50 +1,39 @@
-# Welcome to your Expo app 👋
+# Chat-App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Chat-App is a cross-platform (iOS/Android) single-room chat application built with React Native. It aims to provide a focused, real-time messaging experience for a single shared conversation.
 
-## Get started
+## Features
 
-1. Install dependencies
+This project implements the following features :
 
-   ```bash
-   npm install
-   ```
+-   **Core Chat Functionality**: Displays messages with sender info, timestamps, and an input bar.
+-   **Real-time Updates**: Fetches new messages and participant data from the API via polling.
+-   **Offline Support**: Persists chat data locally for offline access.
+-   **Optimized UI**: Grouped consecutive messages, image attachments.
+-   **Interactive Elements**: Displays reactions, shows participant details, and previews images in modals.
 
-2. Start the app
+## Technologies Used
 
-   ```bash
-   npx expo start
-   ```
+-   **Framework**: React Native
+-   **Development Tools**: Expo
+-   **State Management**: Zustand
+-   **Data Persistence**: `@react-native-async-storage/async-storage`
 
-In the output, you'll find options to open the app in a
+## Setup & Run
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
-
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+1.  **Clone the repository:**
+    ```bash
+    git clone [your-repo-link]
+    cd chat-app
+    ```
+2.  **Install dependencies:**
+    ```bash
+    npm install # or yarn install
+    ```
+3.  **Run the application:**
+    ```bash
+    npm start # or yarn start
+    ```
+    This will open the Expo Dev Tools in your browser. You can then:
+    -   Scan the QR code with the **Expo Go** app on your physical device.
+    -   Select "Run on Android emulator" or "Run on iOS simulator".
