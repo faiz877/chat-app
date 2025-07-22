@@ -82,7 +82,7 @@ export const useChatStore = create<ChatState & ChatActions>()(
               state.messages[existingIndex] = message;
             } else {
               state.messages.push(message);
-              state.messages.sort((a : TMessageJSON, b : TMessageJSON) => a.sentAt - b.sentAt);
+              state.messages.sort((a : TMessageJSON, b : TMessageJSON) => b.sentAt - a.sentAt);
             }
           }),
         ),
@@ -100,7 +100,7 @@ export const useChatStore = create<ChatState & ChatActions>()(
                 state.messages.push(newMessage);
               }
             });
-            state.messages.sort((a : TMessageJSON, b : TMessageJSON) => a.sentAt - b.sentAt);
+            state.messages.sort((a : TMessageJSON, b : TMessageJSON) => b.sentAt - a.sentAt);
           }),
         ),
 

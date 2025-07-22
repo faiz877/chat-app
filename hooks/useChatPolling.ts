@@ -18,6 +18,11 @@ export const useChatPolling = () => {
   const intervalRef = useRef<number | null>(null);
 
   const pollForUpdates = useCallback(async () => {
+    if (!sessionUuid || lastFetchTime === 0) {
+      console.log("Polling: Waiting for initial setup from ChatScreen to complete.");
+      return;
+    }
+
     try {
       const info = await getInfo();
       if (!info) {
@@ -26,24 +31,25 @@ export const useChatPolling = () => {
         return;
       }
 
-      setSessionInfo(info.sessionUuid, info.apiVersion);
-
-      if (sessionUuid === info.sessionUuid || sessionUuid === null) {
-        const newMessages = await getMessagesUpdates(lastFetchTime);
-        if (newMessages.length > 0) {
-          addOrUpdateMessages(newMessages);
-        }
-
-        const newParticipants = await getParticipantsUpdates(lastFetchTime);
-        if (newParticipants.length > 0) {
-          addOrUpdateParticipants(newParticipants);
-        }
-
-        setLastFetchTime(Date.now());
-        setError(null);
-      } else {
-        console.log("Polling skipped this cycle: Session UUID changed, expecting full re-initialization from ChatScreen.");
+      if (sessionUuid !== info.sessionUuid) {
+        console.warn("Polling detected Session UUID change. Store will reset. Skipping current poll updates.");
+        setSessionInfo(info.sessionUuid, info.apiVersion);
+        return;
       }
+
+      // Proceed with fetching updates only if no session change detected
+      const newMessages = await getMessagesUpdates(lastFetchTime);
+      if (newMessages.length > 0) {
+        addOrUpdateMessages(newMessages);
+      }
+
+      const newParticipants = await getParticipantsUpdates(lastFetchTime);
+      if (newParticipants.length > 0) {
+        addOrUpdateParticipants(newParticipants);
+      }
+
+      setLastFetchTime(Date.now());
+      setError(null);
     } catch (e: unknown) {
       console.error("Polling cycle failed:", e);
       setError(`Polling failed: ${(e instanceof Error ? e.message : String(e))}`);
@@ -64,7 +70,6 @@ export const useChatPolling = () => {
       clearInterval(intervalRef.current);
     }
 
-    pollForUpdates();
     intervalRef.current = setInterval(pollForUpdates, POLLING_INTERVAL);
 
     return () => {
