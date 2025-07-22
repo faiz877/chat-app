@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { TMessageJSON, TParticipant } from '../types/api';
+import Avatar from './Avatar';
 
 interface MessageItemProps {
   message: TMessageJSON;
@@ -24,6 +25,22 @@ const MessageItem: React.FC<MessageItemProps> = ({
       styles.messageBubble,
       isMyMessage ? styles.myMessageBubble : styles.otherMessageBubble,
     ]}>
+        {/* >>>>>> Add Avatar here <<<<<< */}
+      <View style={styles.messageHeader}>
+        {!isMyMessage && ( // Only show avatar for others' messages for now
+          <Avatar uri={participant?.avatarUrl} name={participant?.name} size={30} />
+        )}
+        <Text style={[
+          styles.messageSender,
+          isMyMessage ? styles.myMessageSender : styles.otherMessageSender,
+          // Adjust margin if there's no avatar for 'You'
+          isMyMessage && { marginLeft: 0 },
+          !isMyMessage && { marginLeft: 8 } // Add margin if avatar is present
+        ]}>
+          {senderName}
+        </Text>
+      </View>
+      {/* >>>>>> End Avatar addition <<<<<< */}
       <Text style={[
         styles.messageSender,
         isMyMessage ? styles.myMessageSender : styles.otherMessageSender,
@@ -58,6 +75,11 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start', 
     backgroundColor: '#333333',
     borderBottomLeftRadius: 2,
+  },
+  messageHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
   },
   messageSender: {
     fontSize: 12,
