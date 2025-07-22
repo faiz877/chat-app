@@ -3,6 +3,7 @@ import { ActivityIndicator, Button, KeyboardAvoidingView, Platform, SafeAreaView
 import { getAllMessages, getAllParticipants, getInfo, postNewMessage } from "../api/chatApi";
 import InputBar from "../components/InputBar";
 import MessageList from "../components/MessageList";
+import { useChatPolling } from "../hooks/useChatPolling";
 import { useChatStore } from "../store/useChatStore";
 import { TMessageJSON } from "../types/api";
 
@@ -41,6 +42,8 @@ const ChatScreen = () => {
   const myUuid = useChatStore((state) => state.myUuid);
 
   const [inputText, setInputText] = useState("");
+
+  useChatPolling();
 
   const initializeChat = async () => {
     setLoading(true);
