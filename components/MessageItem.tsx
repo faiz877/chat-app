@@ -63,6 +63,15 @@ const MessageItem: React.FC<MessageItemProps> = ({
       {message.updatedAt > message.sentAt && (
         <Text style={styles.editedIndicator}> (edited)</Text>
       )}
+      {message.reactions && message.reactions.length > 0 && (
+        <View style={styles.reactionsContainer}>
+          {message.reactions.map((reaction) => (
+            <View key={reaction.uuid} style={styles.reactionBubble}>
+              <Text style={styles.reactionText}>{reaction.value}</Text>
+            </View>
+          ))}
+        </View>
+      )}
       <Text style={styles.messageTime}>{messageTime}</Text>
     </View>
   );
@@ -124,6 +133,25 @@ const styles = StyleSheet.create({
     color: '#AAAAAA',
     fontStyle: 'italic',
     textAlign: 'right',
+  },
+  reactionsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 8,
+    marginBottom: 4,
+    justifyContent: 'flex-start',
+  },
+  reactionBubble: {
+    backgroundColor: '#444444',
+    borderRadius: 10,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    marginRight: 4,
+    marginBottom: 4,
+  },
+  reactionText: {
+    fontSize: 12,
+    color: '#FFFFFF',
   },
   messageTime: {
     fontSize: 10,
