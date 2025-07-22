@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, FlatList, StyleSheet, View } from 'react-native';
 import { TMessageJSON, TParticipant } from '../types/api';
 import DateSeparator from './DateSeperator';
 import MessageItem from './MessageItem';
@@ -8,12 +8,16 @@ interface MessageListProps {
   messages: TMessageJSON[];
   participants: TParticipant[];
   myUuid: string;
+  onLoadOlderMessages: () => void;
+  isLoadingOlder: boolean;
 }
 
 const MessageList: React.FC<MessageListProps> = ({
   messages,
   participants,
   myUuid,
+  onLoadOlderMessages,
+  isLoadingOlder,
 }) => {
   const getParticipant = (uuid: string) => {
     return participants.find((p: TParticipant) => p.uuid === uuid);
@@ -45,12 +49,22 @@ const MessageList: React.FC<MessageListProps> = ({
               participant={getParticipant(item.authorUuid)}
               isMyMessage={item.authorUuid === myUuid}
               isGrouped={isGrouped}
+              participants={participants}
             />
           </View>
         );
       }}
       inverted
       contentContainerStyle={styles.contentContainer}
+      onEndReached={onLoadOlderMessages}
+      onEndReachedThreshold={0.5}
+      ListFooterComponent={
+        isLoadingOlder ? (
+          <View style={styles.loadingMoreContainer}>
+            <ActivityIndicator size="small" color="#007AFF" />
+          </View>
+        ) : null
+      }
     />
   );
 };
@@ -60,6 +74,11 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     justifyContent: 'flex-end',
     flexGrow: 1,
+  },
+  loadingMoreContainer: {
+    paddingVertical: 10,
+    alignItems: 'center',
+    marginBottom: 10,
   },
 });
 

@@ -1,13 +1,16 @@
+import { Image } from 'expo-image';
 import React from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { TMessageJSON, TParticipant } from '../types/api';
 import Avatar from './Avatar';
+import ReactionsBottomSheet from './ReactionsBottomSheet';
 
 interface MessageItemProps {
   message: TMessageJSON;
   participant: TParticipant | undefined;
   isMyMessage: boolean;
   isGrouped: boolean;
+  participants: TParticipant[];
 }
 
 const MessageItem: React.FC<MessageItemProps> = ({
@@ -15,7 +18,9 @@ const MessageItem: React.FC<MessageItemProps> = ({
   participant,
   isMyMessage,
   isGrouped,
+  participants,
 }) => {
+  const [isReactionsSheetVisible, setReactionsSheetVisible] = React.useState(false);
   const senderName = isMyMessage ? 'You' : (participant?.name || 'Unknown User');
   const messageTime = new Date(message.sentAt).toLocaleTimeString([], {
     hour: '2-digit',
@@ -55,7 +60,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
             styles.messageImage,
             { aspectRatio: imageAttachment.width / imageAttachment.height || 1 },
           ]}
-          resizeMode="contain"
+          contentFit="contain"
         />
       )}
 
@@ -74,16 +79,28 @@ const MessageItem: React.FC<MessageItemProps> = ({
       {message.updatedAt > message.sentAt && (
         <Text style={styles.editedIndicator}> (edited)</Text>
       )}
+
       {message.reactions && message.reactions.length > 0 && (
-        <View style={styles.reactionsContainer}>
+        <TouchableOpacity
+          onPress={() => setReactionsSheetVisible(true)}
+          style={styles.reactionsContainer}
+        >
           {message.reactions.map((reaction) => (
             <View key={reaction.uuid} style={styles.reactionBubble}>
               <Text style={styles.reactionText}>{reaction.value}</Text>
             </View>
           ))}
-        </View>
+        </TouchableOpacity>
       )}
+
       <Text style={styles.messageTime}>{messageTime}</Text>
+
+      <ReactionsBottomSheet
+        isVisible={isReactionsSheetVisible}
+        onClose={() => setReactionsSheetVisible(false)}
+        reactions={message.reactions || []}
+        participants={participants}
+      />
     </View>
   );
 };
