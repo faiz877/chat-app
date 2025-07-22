@@ -7,12 +7,14 @@ interface MessageItemProps {
   message: TMessageJSON;
   participant: TParticipant | undefined;
   isMyMessage: boolean;
+  isGrouped: boolean;
 }
 
 const MessageItem: React.FC<MessageItemProps> = ({
   message,
   participant,
   isMyMessage,
+  isGrouped,
 }) => {
   const senderName = isMyMessage ? 'You' : (participant?.name || 'Unknown User');
   const messageTime = new Date(message.sentAt).toLocaleTimeString([], {
@@ -24,29 +26,23 @@ const MessageItem: React.FC<MessageItemProps> = ({
     <View style={[
       styles.messageBubble,
       isMyMessage ? styles.myMessageBubble : styles.otherMessageBubble,
+      isGrouped && styles.groupedMessageBubble,
     ]}>
-        {/* >>>>>> Add Avatar here <<<<<< */}
-      <View style={styles.messageHeader}>
-        {!isMyMessage && ( // Only show avatar for others' messages for now
-          <Avatar uri={participant?.avatarUrl} name={participant?.name} size={30} />
-        )}
-        <Text style={[
-          styles.messageSender,
-          isMyMessage ? styles.myMessageSender : styles.otherMessageSender,
-          // Adjust margin if there's no avatar for 'You'
-          isMyMessage && { marginLeft: 0 },
-          !isMyMessage && { marginLeft: 8 } // Add margin if avatar is present
-        ]}>
-          {senderName}
-        </Text>
-      </View>
-      {/* >>>>>> End Avatar addition <<<<<< */}
-      <Text style={[
-        styles.messageSender,
-        isMyMessage ? styles.myMessageSender : styles.otherMessageSender,
-      ]}>
-        {senderName}
-      </Text>
+      {!isGrouped && (
+        <View style={styles.messageHeader}>
+          {!isMyMessage && (
+            <Avatar uri={participant?.avatarUrl} name={participant?.name} size={30} />
+          )}
+          <Text style={[
+            styles.messageSender,
+            isMyMessage ? styles.myMessageSender : styles.otherMessageSender,
+            !isMyMessage && { marginLeft: 8 }
+          ]}>
+            {senderName}
+          </Text>
+        </View>
+      )}
+
       <Text style={styles.messageText}>{message.text}</Text>
       {message.updatedAt > message.sentAt && (
         <Text style={styles.editedIndicator}> (edited)</Text>
@@ -62,7 +58,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     marginVertical: 4,
     marginHorizontal: 10,
-    borderRadius: 12, 
+    borderRadius: 12,
     maxWidth: '80%',
     minWidth: '20%',
   },
@@ -72,9 +68,12 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 2,
   },
   otherMessageBubble: {
-    alignSelf: 'flex-start', 
+    alignSelf: 'flex-start',
     backgroundColor: '#333333',
     borderBottomLeftRadius: 2,
+  },
+  groupedMessageBubble: {
+    marginTop: 2,
   },
   messageHeader: {
     flexDirection: 'row',
@@ -84,30 +83,29 @@ const styles = StyleSheet.create({
   messageSender: {
     fontSize: 12,
     fontWeight: 'bold',
-    marginBottom: 4,
   },
   myMessageSender: {
-    color: '#E0E0E0', 
+    color: '#E0E0E0',
     textAlign: 'right',
   },
   otherMessageSender: {
-    color: '#999999', 
+    color: '#999999',
     textAlign: 'left',
   },
   messageText: {
     fontSize: 16,
-    color: '#FFFFFF', 
+    color: '#FFFFFF',
     marginBottom: 4,
   },
   editedIndicator: {
     fontSize: 10,
     color: '#AAAAAA',
     fontStyle: 'italic',
-    textAlign: 'right', 
+    textAlign: 'right',
   },
   messageTime: {
     fontSize: 10,
-    color: '#BBBBBB', 
+    color: '#BBBBBB',
     marginTop: 2,
     alignSelf: 'flex-end',
   },

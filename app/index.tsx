@@ -39,6 +39,7 @@ const ChatScreen = () => {
   const addOrUpdateParticipants = useChatStore(
     (state) => state.addOrUpdateParticipants,
   );
+  const setLastFetchTime = useChatStore((state) => state.setLastFetchTime);
   const myUuid = useChatStore((state) => state.myUuid);
 
   const [inputText, setInputText] = useState("");
@@ -65,6 +66,7 @@ const ChatScreen = () => {
 
       addOrUpdateMessages(allMessages);
       addOrUpdateParticipants(allParticipants);
+      setLastFetchTime(Date.now());
     } catch (e: unknown) {
       console.error("Initialization error:", e);
       setError(`Failed to initialize chat: ${(e instanceof Error ? e.message : String(e))}`);
