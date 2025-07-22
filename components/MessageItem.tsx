@@ -1,8 +1,9 @@
 import { Image } from 'expo-image';
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { TMessageJSON, TParticipant } from '../types/api';
 import Avatar from './Avatar';
+import ParticipantDetailsBottomSheet from './ParticipantDetailsBottomSheet';
 import ReactionsBottomSheet from './ReactionsBottomSheet';
 
 interface MessageItemProps {
@@ -20,17 +21,23 @@ const MessageItem: React.FC<MessageItemProps> = ({
   isGrouped,
   participants,
 }) => {
-  const [isReactionsSheetVisible, setReactionsSheetVisible] = React.useState(false);
+  const [isReactionsSheetVisible, setReactionsSheetVisible] = useState(false);
+  const [isParticipantDetailsVisible, setParticipantDetailsVisible] = useState(false);
+  const [selectedParticipant, setSelectedParticipant] = useState<TParticipant | undefined>(undefined);
   const senderName = isMyMessage ? 'You' : (participant?.name || 'Unknown User');
   const messageTime = new Date(message.sentAt).toLocaleTimeString([], {
     hour: '2-digit',
     minute: '2-digit',
   });
 
-  // Get the first image attachment if it exists
   const imageAttachment = message.attachments?.find(
     (att) => att.type === 'image'
   );
+
+  const handleParticipantClick = (p: TParticipant | undefined) => {
+    setSelectedParticipant(p);
+    setParticipantDetailsVisible(true);
+  };
 
   return (
     <View style={[
@@ -41,15 +48,19 @@ const MessageItem: React.FC<MessageItemProps> = ({
       {!isGrouped && (
         <View style={styles.messageHeader}>
           {!isMyMessage && (
-            <Avatar uri={participant?.avatarUrl} name={participant?.name} size={30} />
+            <TouchableOpacity onPress={() => handleParticipantClick(participant)}>
+              <Avatar uri={participant?.avatarUrl} name={participant?.name} size={30} />
+            </TouchableOpacity>
           )}
-          <Text style={[
-            styles.messageSender,
-            isMyMessage ? styles.myMessageSender : styles.otherMessageSender,
-            !isMyMessage && { marginLeft: 8 }
-          ]}>
-            {senderName}
-          </Text>
+          <TouchableOpacity onPress={() => handleParticipantClick(participant)}>
+            <Text style={[
+              styles.messageSender,
+              isMyMessage ? styles.myMessageSender : styles.otherMessageSender,
+              !isMyMessage && { marginLeft: 8 }
+            ]}>
+              {senderName}
+            </Text>
+          </TouchableOpacity>
         </View>
       )}
 
@@ -67,7 +78,9 @@ const MessageItem: React.FC<MessageItemProps> = ({
       {message.replyToMessage && (
         <View style={styles.replyContainer}>
           <Text style={styles.replySender}>
-            {message.replyToMessage.authorUuid === 'you' ? 'You' : (participant?.name || 'Unknown User')}
+            {message.replyToMessage.authorUuid === 'you' ? 'You' : (
+              participants.find(p => p.uuid === message.replyToMessage?.authorUuid)?.name || 'Unknown User'
+            )}
           </Text>
           <Text style={styles.replyText} numberOfLines={1}>
             {message.replyToMessage.text}
@@ -100,6 +113,11 @@ const MessageItem: React.FC<MessageItemProps> = ({
         onClose={() => setReactionsSheetVisible(false)}
         reactions={message.reactions || []}
         participants={participants}
+      />
+      <ParticipantDetailsBottomSheet
+        isVisible={isParticipantDetailsVisible}
+        onClose={() => setParticipantDetailsVisible(false)}
+        participant={selectedParticipant}
       />
     </View>
   );
